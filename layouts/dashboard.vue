@@ -179,7 +179,7 @@ function setActiveTeam(team: typeof data.teams[number]) {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Platform</SidebarGroupLabel>
+                    <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
                     <SidebarMenu>
                         <Collapsible
                             v-for="item in data.navMain"

@@ -8,8 +8,5 @@ const user = useCookie('user').value;
 </script>
 
 <template>
-
     {{user}}
-
-
 </template>
