@@ -33,7 +33,11 @@ export default defineNuxtConfig({
     public: {
       apiKey:'http://127.0.0.1:5000'
     }
+  },
+  router: {
+    middleware: ['auth']
   }
+
 
 
 })

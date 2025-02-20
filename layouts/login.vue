@@ -18,7 +18,7 @@
                         Inicio
                     </h1>
                     <p class="text-balance text-muted-foreground">
-                        Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta
+                        Ingrese su nombre de usuario y contraseña a continuación para iniciar sesión en su cuenta
                     </p>
                 </div>
                 <div class="grid gap-4">

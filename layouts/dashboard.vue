@@ -1,24 +1,15 @@
-<script setup lang=ts>
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from '@/components/ui/avatar'
+<script lang="ts" setup>
+import {Avatar, AvatarFallback, AvatarImage,} from '@/components/ui/avatar'
 
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
-    BreadcrumbPage,
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+import {Collapsible, CollapsibleContent, CollapsibleTrigger,} from '@/components/ui/collapsible'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,10 +17,9 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Separator } from '@/components/ui/separator'
+import {Separator} from '@/components/ui/separator'
 import {
     Sidebar,
     SidebarContent,
@@ -39,7 +29,6 @@ import {
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
-    SidebarMenuAction,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
@@ -50,56 +39,35 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar'
 import {
-    AudioWaveform,
     BadgeCheck,
-    Bell,
     BookOpen,
     Bot,
     ChevronRight,
     ChevronsUpDown,
-    Command,
-    CreditCard,
-    Folder,
-    Forward,
-    Frame,
     GalleryVerticalEnd,
     LogOut,
-    Map,
-    MoreHorizontal,
-    PieChart,
-    Plus,
-    Settings2,
-    Sparkles,
     SquareTerminal,
-    Trash2,
 } from 'lucide-vue-next'
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import Toaster from '@/components/ui/toast/Toaster.vue'
-// This is sample data.
+import type UserType from '@/types/UserType'
+import {useToast} from '@/components/ui/toast/use-toast'
 
+
+const user = useCookie('user').value as UserType | null;
 
 const data = {
     user: {
-        name: 'shadcn',
-        email: 'm@example.com',
+        name: user.name,
+        email: user.email,
         avatar: '/avatars/shadcn.jpg',
     },
     teams: [
         {
-            name: 'Acme Inc',
+            name: 'Sistema',
             logo: GalleryVerticalEnd,
-            plan: 'Enterprise',
-        },
-        {
-            name: 'Acme Corp.',
-            logo: AudioWaveform,
-            plan: 'Startup',
-        },
-        {
-            name: 'Evil Corp.',
-            logo: Command,
-            plan: 'Free',
-        },
+            plan: user.roles[0],
+        }
     ],
     navMain: [
         {
@@ -113,9 +81,10 @@ const data = {
                     url: '/admin/ListaUsuarios',
                 },
             ],
+            roles: ['admin'] // Solo el rol 'admin' puede ver esto
         },
         {
-            title: 'Models',
+            title: 'Modelos',
             url: '#',
             icon: Bot,
             items: [
@@ -124,23 +93,32 @@ const data = {
                     url: '/modelos/ListaShips',
                 },
             ],
+            roles: ['admin', 'basic'] // Los roles 'admin' y 'basic' pueden ver esto
         },
         {
-            title: 'Documentation',
+            title: 'Documentacion',
             url: '#',
             icon: BookOpen,
             items: [
                 {
                     title: 'Introducción',
-                    url: '#',
+                    url: '/documentacion/',
                 },
             ],
+            roles: ['admin', 'rh'] // Los roles 'admin' y 'rh' pueden ver esto
         },
     ],
-
 }
+
+// Función para filtrar los elementos del menú según los roles del usuario
+const filteredNavMain = computed(() => {
+    return data.navMain.filter(item => {
+        return item.roles.some(role => user.roles.includes(role));
+    });
+});
+
 const breadcrumbLinks = ref([
-    { label: 'Dashboard', url: '/dashboard' }
+    {label: 'Dashboard', url: '/dashboard/'}
 ])
 
 const activeTeam = ref(data.teams[0])
@@ -148,6 +126,63 @@ const activeTeam = ref(data.teams[0])
 function setActiveTeam(team: typeof data.teams[number]) {
     activeTeam.value = team
 }
+
+const apiUrl = useRuntimeConfig().public.apiKey;
+const {toast} = useToast()
+
+const logout = async () => {
+    try {
+        // Obtener el token de acceso de las cookies
+        const accessToken = useCookie('access_token').value;
+
+        // Verificar si hay un token de acceso
+        if (!accessToken) {
+            console.error('No access token found.');
+            return;
+        }
+
+        // Hacer la solicitud DELETE al endpoint de logout
+        const {error} = await useFetch(`${apiUrl}/auth/logout`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${accessToken}` // Enviar el token en el encabezado
+            }
+        });
+
+        // Manejar errores
+        if (error.value) {
+            console.error('Error during logout:', error.value);
+            toast({
+                title: 'Error',
+                description: 'Error al cerrar sesión. Por favor, inténtelo de nuevo.',
+            });
+            return;
+        }
+
+        // Limpiar las cookies
+        useCookie('access_token').value = null;
+        useCookie('refresh_token').value = null;
+        useCookie('user').value = null;
+
+        // Redirigir al usuario a la página de inicio de sesión
+        navigateTo('/');
+
+        // Mostrar un mensaje de éxito
+        toast({
+            title: 'Éxito',
+            description: 'Cierre de sesión exitoso.',
+        });
+
+    } catch (err) {
+        console.error('Unexpected error during logout:', err);
+        toast({
+            title: 'Error',
+            description: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+        });
+    }
+};
+
+
 </script>
 
 <template>
@@ -182,7 +217,7 @@ function setActiveTeam(team: typeof data.teams[number]) {
                     <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
                     <SidebarMenu>
                         <Collapsible
-                            v-for="item in data.navMain"
+                            v-for="item in filteredNavMain"
                             :key="item.title"
                             as-child
                             :default-open="item.isActive"
@@ -262,7 +297,7 @@ function setActiveTeam(team: typeof data.teams[number]) {
 
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>
+                                <DropdownMenuItem @click="logout">
                                     <LogOut />
                                     Salir
                                 </DropdownMenuItem>
@@ -282,7 +317,10 @@ function setActiveTeam(team: typeof data.teams[number]) {
                         <BreadcrumbList>
                             <BreadcrumbSeparator class="hidden md:block" />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>{{ breadcrumbLinks[0].label }}</BreadcrumbPage>
+                                <BreadcrumbLink :href="breadcrumbLinks[0].url">{{
+                                        breadcrumbLinks[0].label
+                                    }}
+                                </BreadcrumbLink>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>

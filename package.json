@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@hebilicious/authjs-nuxt": "^0.3.5",
-    "@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",
     "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@radix-icons/vue": "^1.0.0",

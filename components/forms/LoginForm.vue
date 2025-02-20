@@ -49,7 +49,7 @@ const onSubmit = handleSubmit(async (values) => {
                 const { access_token, refresh_token, user } = data.value
                 console.log('Access Token:', access_token)
                 console.log('Refresh Token:', refresh_token)
-                console.log('User ID:', user)
+                console.log('UserType ID:', user)
 
 
                 // Almacenar el token en el almacenamiento local o en una cookie
@@ -65,13 +65,16 @@ const onSubmit = handleSubmit(async (values) => {
         console.error('Unexpected error:', err)
     }
 })
+
+
+
 </script>
 
 <template>
     <form class="space-y-6" @submit="onSubmit">
         <FormField v-slot="{ componentField }" name="username" :validate-on-blur="!isFieldDirty">
             <FormItem>
-                <FormLabel>username</FormLabel>
+                <FormLabel>Usuario</FormLabel>
                 <FormControl>
                     <Input type="text" placeholder="Usuario" v-bind="componentField"/>
                 </FormControl>
