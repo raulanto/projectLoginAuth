@@ -5,6 +5,6 @@ export default function ({redirect}: { redirect: (path: string) => void }) {
     const user = useCookie('user').value;
 
     if (!accessToken || !refreshToken || !user) {
-        return redirect('/');
+        return navigateTo('/');
     }
 }

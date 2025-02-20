@@ -142,7 +142,7 @@ const logout = async () => {
         }
 
         // Hacer la solicitud DELETE al endpoint de logout
-        const {error} = await useFetch(`${apiUrl}/auth/logout`, {
+        const {error} = await useApi(`${apiUrl}/auth/logout`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken}` // Enviar el token en el encabezado

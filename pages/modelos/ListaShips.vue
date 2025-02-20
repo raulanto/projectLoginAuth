@@ -19,7 +19,7 @@ const apiUrl = useRuntimeConfig().public.apiKey;
 const accessToken = useCookie('access_token').value;
 
 // Hacer la solicitud al endpoint /users
-const {data: ships, error} = await useFetch(`${apiUrl}/api/ships`, {
+const {data: ships, error} = await useApi(`${apiUrl}/api/ships`, {
     method: 'GET',
     headers: {
         'Authorization': `Bearer ${accessToken}` // Enviar el token en el encabezado

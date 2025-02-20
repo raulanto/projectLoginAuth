@@ -22,12 +22,12 @@ const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
     try {
         const formData = new FormData()
-        formData.append('username', values.username) // Asegúrate de que el nombre del campo sea 'username'
-        formData.append('password', values.password) // Asegúrate de que el nombre del campo sea 'password'
+        formData.append('username', values.username)
+        formData.append('password', values.password)
 
         const {data, error} = await useFetch(`${apiUrl}/auth/login`, {
             method: 'POST',
-            body: formData, // Envía los datos como FormData
+            body: formData,
         })
 
         if (error.value) {
@@ -45,19 +45,13 @@ const onSubmit = handleSubmit(async (values) => {
             }
         } else {
             if (data.value) {
-                //@ts-ignore
                 const { access_token, refresh_token, user } = data.value
                 console.log('Access Token:', access_token)
                 console.log('Refresh Token:', refresh_token)
                 console.log('UserType ID:', user)
-
-
-                // Almacenar el token en el almacenamiento local o en una cookie
                 useCookie('access_token').value = access_token
                 useCookie('refresh_token').value = refresh_token
                 useCookie('user').value = user
-
-                // Redirigir al usuario
                 navigateTo('/dashboard')
             }
         }
