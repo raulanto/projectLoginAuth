@@ -11,7 +11,7 @@ export function useApi<T>(url: string, options: any = {}) {
     };
 
     return useFetch<T>(url, {
-        baseURL: config.public.apiBase,
+        baseURL: config.public.apiKey,
         ...options,
         async onResponseError({ response }) {
             if (response.status === 401 && refreshToken.value) {
@@ -20,16 +20,16 @@ export function useApi<T>(url: string, options: any = {}) {
                     const { data: newTokens } = await useFetch('/auth/refresh', {
                         method: 'POST',
                         headers: { Authorization: `Bearer ${refreshToken.value}` },
-                        baseURL: config.public.apiBase,
+                        baseURL: config.public.apiKey,
                     });
 
-                    if (!newTokens.value) {
+                    if (!newTokens.value || !newTokens.value.access_token) {
                         throw new Error('No se pudo refrescar el token');
                     }
 
                     // Guardar nuevos tokens
                     accessToken.value = newTokens.value.access_token;
-                    refreshToken.value = newTokens.value.refresh_token;
+
 
                     // Reintentar la solicitud original con el nuevo token
                     return useFetch<T>(url, {

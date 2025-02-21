@@ -134,6 +134,7 @@ const logout = async () => {
     try {
         // Obtener el token de acceso de las cookies
         const accessToken = useCookie('access_token').value;
+        const refresh_token = useCookie('refresh_token').value;
 
         // Verificar si hay un token de acceso
         if (!accessToken) {
@@ -158,6 +159,7 @@ const logout = async () => {
             });
             return;
         }
+
 
         // Limpiar las cookies
         useCookie('access_token').value = null;

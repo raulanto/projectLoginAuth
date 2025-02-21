@@ -6,17 +6,15 @@ definePageMeta({
     layout: 'dashboard',
     middleware: 'auth'
 });
-
+import { useApi } from '@/composables/useApi'
 const apiUrl = useRuntimeConfig().public.apiKey;
 const accessToken = useCookie('access_token').value;
 
 // Hacer la solicitud al endpoint /users
-const {data: users, error} = await useApi(`${apiUrl}/api/users`, {
+const { data: users, error } = await useApi('/api/users', {
     method: 'GET',
-    headers: {
-        'Authorization': `Bearer ${accessToken}` // Enviar el token en el encabezado
-    }
 });
+
 
 // Manejar errores
 if (error.value) {

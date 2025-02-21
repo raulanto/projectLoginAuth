@@ -8,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-
+import { useApi } from '@/composables/useApi'
 
 definePageMeta({
     layout: 'dashboard',
@@ -18,13 +18,10 @@ definePageMeta({
 const apiUrl = useRuntimeConfig().public.apiKey;
 const accessToken = useCookie('access_token').value;
 
-// Hacer la solicitud al endpoint /users
-const {data: ships, error} = await useApi(`${apiUrl}/api/ships`, {
+const { data: ships, error } = await useApi('/api/ships', {
     method: 'GET',
-    headers: {
-        'Authorization': `Bearer ${accessToken}` // Enviar el token en el encabezado
-    }
 });
+
 
 // Manejar errores
 if (error.value) {
